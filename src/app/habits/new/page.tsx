@@ -1,3 +1,3 @@
 export default function Home() {
-  return <div>習慣一覧</div>
+  return <div>習慣作成</div>
 }

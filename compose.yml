@@ -1,0 +1,49 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: habit_log
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - habit_network
+    ports:
+      - '3306:3306'
+
+  node:
+    image: node:18
+    container_name: node
+    volumes:
+      - ./app:/usr/src/app
+    working_dir: /usr/src/app
+    command: sh -c "npm install && npm run dev"
+    networks:
+      - habit_network
+    ports:
+      - '3000:3000'
+    depends_on:
+      - mysql
+
+  pma:
+    image: phpmyadmin:latest
+    container_name: pma
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - '8080:80'
+    networks:
+      - habit_network
+    depends_on:
+      - mysql
+
+volumes:
+  mysql_data:
+
+networks:
+  habit_network:
+    driver: bridge
